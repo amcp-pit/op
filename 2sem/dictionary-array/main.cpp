@@ -5,6 +5,7 @@
 #include <ctime>
 
 int main(){
+
 	const char fname[] = "en_ru.txt";
 	std::ifstream inFile(fname);
 	if(!inFile){
@@ -28,16 +29,45 @@ int main(){
 	std::cout<<"Size: "<< Dictionary.size() << std::endl;
 	std::cout<<"Capacity: "<< Dictionary.capacity() << std::endl;
 
+	Dictionary.sort();
+/*
+	for(int i=0; i<100 && i<Dictionary.size(); ++i){
+		std::cout<< Dictionary[i];
+	}
+*/
+	std::cout<< "\nFirst 100 words" <<std::endl;
+	cnt = 0;
+	for(auto pos = Dictionary.rbegin(); 
+		pos != Dictionary.rend() && cnt <100; 
+		++pos, ++cnt){
+		std::cout << *pos;
+	}
+
+	std::cout<< "\nLast 100 words" <<std::endl;
+	cnt = 0;
+	for(auto pos = Dictionary.rbegin(); 
+		pos != Dictionary.rend() && cnt <100; 
+		++pos, ++cnt){
+		std::cout << *pos;
+	}
+
+
 	char buf[128];
 	do {
 		std::cout << "> ";
 		std::cin.getline(buf, 128);
 
 		dictPara what(buf, "");
-		for(size_t i=0; i<Dictionary.size(); ++i){
+/*
+	for(size_t i=0; i<Dictionary.size(); ++i){
 			if (Dictionary[i] == what){
 				std::cout << Dictionary[i];
 			}
+		}
+*/
+		auto pos = Dictionary.find(what);
+		if (pos!=Dictionary.end()){
+			std::cout<< *pos;
 		}
 	} while (strlen(buf) > 0);
 

@@ -9,7 +9,7 @@ public:
 	dictPara(const stroka& word, const stroka& translate) 
 		: word_(word), translate_(translate) {}
 	dictPara(const dictPara& other): word_(other.word_),
-								translate_(other.translate_) {}
+								translate_(other.translate_) {}	
 	dictPara(dictPara&& other): word_(std::move(other.word_)),
 								translate_(std::move(other.translate_)) {}
 
