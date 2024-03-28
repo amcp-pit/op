@@ -28,12 +28,17 @@ int main(){
 	std::cout<<"Size: "<< Dictionary.size() << std::endl;
 	std::cout<<"Height: "<< Dictionary.height() << std::endl;
 	
-	for(auto pos=Dictionary.begin(); pos!=Dictionary.end(); ++pos){
+	/*cnt=0;
+	for(auto pos=Dictionary.begin(); pos!=Dictionary.end() && cnt<20; ++pos, ++cnt){
 		std::cout << *pos ;
 	}
 
+	cnt = 0;
+	for(auto pos=Dictionary.rbegin(); pos!=Dictionary.rend() && cnt<20; ++pos, ++cnt){
+		std::cout << *pos ;
+	}
+	*/
 
-/*
 	char buf[128];
 	do {
 		std::cout << "> ";
@@ -53,9 +58,10 @@ int main(){
 
 		if (pos!=Dictionary.end()){
 			std::cout<< *pos;
-			Dictionary.erase(pos);
 		}
+		Dictionary.erase(pos);
+		std::cout<<"Height: "<< Dictionary.height() << std::endl;
 	} while (strlen(buf) > 0);
-*/
+
 	return 0;
 }

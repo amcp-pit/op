@@ -22,7 +22,13 @@ class BinTree{
 			}
 			return now;
 		}
-		
+		Node* maximum(){
+			Node* now = this;
+			while(now->right != nullptr){
+				now = now->right;
+			}
+			return now;
+		}
 		Node* next() {
 			if (right!=nullptr)
 				return right->minimum();
@@ -30,6 +36,20 @@ class BinTree{
 			Node * p = parent;
 			while (p!=nullptr){
 				if (now == p->left)
+					break;
+				now = p;
+				p = now->parent;
+			}
+			return p;
+		}
+
+		Node* prev(){
+			if (left!=nullptr)
+				return left->maximum();
+			Node* now = this;
+			Node* p = parent;
+			while(p != nullptr){
+				if (now == p->right)
 					break;
 				now = p;
 				p = now->parent;
@@ -75,6 +95,7 @@ public:
 				throw "Iterator: out of bounds";
 			return iterator(tmp);
 		}
+		friend class BinTree;
 	};
 	iterator begin() const { 
 		if (root!=nullptr) 
@@ -82,6 +103,39 @@ public:
 		return end();
 	}
 	iterator end() const { return iterator(nullptr); }
+
+	class reverse_iterator{
+		Node * current;
+	public:
+		reverse_iterator(Node *p=nullptr): current(p) {}
+		const T& operator*() const {return current->data;}
+		bool operator==(const reverse_iterator& p) const {return current==p.current;}
+		bool operator!=(const reverse_iterator& p) const {return current!=p.current;}
+		reverse_iterator& operator++(){
+			if (current)
+				current = current->prev();
+			else 
+				throw "Iterator: out of bounds";
+			return *this;
+		}
+		reverse_iterator operator++(int){
+			Node * tmp = current;
+			if (current)
+				current = current->prev();
+			else 
+				throw "Iterator: out of bounds";
+			return reverse_iterator(tmp);
+		}
+	};
+	reverse_iterator rbegin() const { 
+		if (root!=nullptr) 
+			return reverse_iterator(root->maximum());
+		return rend();
+	}
+	reverse_iterator rend() const { return reverse_iterator(nullptr); }
+
+	iterator find(const T&) const;
+	void erase(const iterator&);
 };
 
 template <typename T>
@@ -110,4 +164,55 @@ void BinTree<T>::insert(const T& X){
 	} else {
 		p->right = now;
 	}
+}
+
+template <typename T>
+typename BinTree<T>::iterator BinTree<T>::find(const T& X) const{
+	Node* now = root;
+	while(now){
+		if (X == now->data) break;
+		if (X < now->data)
+			now = now->left;
+		else
+			now = now->right;
+	}
+	return iterator(now);
+}
+
+template <typename T>
+void BinTree<T>::erase(typename const BinTree<T>::iterator& pos){
+	Node* toDelete = pos.current;
+	if (toDelete == nullptr) return;
+	Node* alt;
+	if (toDelete->right == nullptr)
+		alt = toDelete->left;
+	else if (toDelete->left == nullptr)
+		alt = toDelete->right;
+	else {
+		alt = toDelete->right->minimum();
+		if (alt->parent != toDelete){
+			alt->parent->left = alt->right;
+			if(alt->right) alt->right->parent = alt->parent;
+			alt->right = toDelete->right;
+			toDelete->right->parent = alt; 
+		}
+		alt->left = toDelete->left;
+		toDelete->left->parent = alt;
+	}
+	// –азберемс€ с родител€ми узла toDelete
+	if (toDelete->parent==nullptr){
+		root = alt;
+	} else {
+		if (toDelete->parent->left == toDelete)
+			toDelete->parent->left = alt;
+		else 
+			toDelete->parent->right = alt;
+	}
+	if(alt!=nullptr) alt->parent = toDelete->parent;
+
+	// ”дал€ем toDelete, но вспоминаем, что деструктор рекурсивный!
+	toDelete->left=nullptr;
+	toDelete->right=nullptr;
+	delete toDelete;
+	--count;
 }
