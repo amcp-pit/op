@@ -136,6 +136,8 @@ public:
 
 	iterator find(const T&) const;
 	void erase(const iterator&);
+
+	void balance();
 };
 
 template <typename T>
@@ -215,4 +217,67 @@ void BinTree<T>::erase(typename const BinTree<T>::iterator& pos){
 	toDelete->right=nullptr;
 	delete toDelete;
 	--count;
+}
+
+
+template <typename T>
+void BinTree<T>::balance(){
+	if (root == nullptr)
+		return;
+	// Вытянуть в лозу (левоассоциативное дерево)
+	Node *p, *r, *q;
+	p = root;
+	while(p!=nullptr){
+		if (p->right == nullptr)
+			p = p->left;
+		else {
+			r = p->right;
+			q = p->parent;
+			if (q) q->left = r; else root = r;
+			r->parent = q;
+			p->right = r->left;
+			if (r->left) r->left->parent = p;
+			r->left = p;
+			p->parent = r;
+			p = r;
+		}
+	}
+	// Сломать "лишнее"
+	int n = 0, n2=1;
+	for(int i=count+1; i>1; ++n, n2<<=1, i>>=1);
+	int Lishnee = count-(n2-1);
+//	int Lishnee = count-((1<<n)-1);
+	Node *red, *black;
+	red = root;
+	while(Lishnee>0){
+		black = red->left;
+		black->right = red;
+		black->parent = red->parent;
+		if (red->parent) red->parent->left = black;
+		else root = black;
+		red->parent = black;
+		red->left = nullptr;
+		--Lishnee;
+		red = black->left;
+	}
+	// Ломать лозу с 2^n-1 узлами
+	int blackInStep = (n2-1)/2;
+	for(int step = 1; step < n; ++step, blackInStep/=2){
+		red = root;
+		for(int i=0; i<blackInStep; ++i){
+			black = red->left;
+
+			black->parent = red->parent;
+			if (red->parent) red->parent->left = black;
+			else root = black;
+
+			red->left = black->right;
+			if (black->right) black->right->parent = red;
+
+			black->right = red;
+			red->parent = black;
+
+			red = black->left;
+		}
+	}
 }
