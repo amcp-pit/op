@@ -4,13 +4,14 @@
 #include "mydatabase.h"
 
 int main() {
-	DataBase DB = {0, 0, nullptr};
+	DataBase DB = {0, nullptr, nullptr};
+
 	const char dbfilename[] = "student.db";
 	const char exportfilename[] = "students.txt";
 	int action;
 	student tmp;
 	int number;
-	int index;
+	Node* index;
 
 	do {
 		action = menu();
@@ -24,7 +25,7 @@ int main() {
 				break;
 		case 6:	number = get_number();
 				index = findRecord(DB, number);
-				if (index >= 0){
+				if (index){
 					tmp = getRecord(DB, index);
 					setMarks(tmp);
 					updateRecord(DB, index, tmp);
@@ -46,9 +47,9 @@ int main() {
 				break;
 		}
 	} while (action != 0);
-	if (DB.data) {
-		delete[] DB.data;
-	}
+	
+	deleteDB(DB);
+
 	return 0;
 }
 
