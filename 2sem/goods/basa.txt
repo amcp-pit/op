@@ -1,0 +1,10 @@
+apple
+140
+orange
+160
+pineapple
+400
+banana
+50
+tomato
+350
