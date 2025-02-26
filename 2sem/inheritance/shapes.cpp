@@ -3,18 +3,22 @@
 class Shape{
 	unsigned int ID;
 	static unsigned int lastID;
+	static unsigned int counter;
 protected:
 	unsigned int id() const {return ID;}
 public:
-	Shape() { ID = ++lastID; }
+	Shape() { ID = ++lastID; ++counter; }
 	virtual void show() const = 0;
 	virtual void hide() const = 0;
+	static int count() {return counter;}
 	virtual ~Shape() {
 		std::cout << "- delete shape " << ID <<std::endl;
+		--counter;
 	}
 };
 
 unsigned int Shape::lastID = 0;
+unsigned int Shape::counter = 0;
 // -----------------------------------------------------------
 class Point : virtual public Shape{
 protected:
@@ -40,9 +44,11 @@ public:
 };
 // -----------------------------------------------------------
 class Circle : virtual public Point {
+	static int counter;
 	int R;
 public:
 	Circle(int x, int y, int r) : Point(x, y), R(r) {
+		++counter;
 		std::cout << "+ create circle. ";
 		show();
 	}
@@ -54,8 +60,11 @@ public:
         std::cout << "Hide circle O " << id()
                   << " ("<< x0 <<", " << y0 << ", " << R << ")\n";
     }
-	~Circle() { hide(); }
+	static int count() {return counter;}
+	~Circle() { hide(); --counter; }
 };
+// -----------------------------------------------------------
+int Circle::counter = 0;
 
 // -----------------------------------------------------------
 class Rectangle : virtual public Point {
@@ -90,12 +99,12 @@ public:
 // -----------------------------------------------------------
 class Square : public Rectangle{
 public:
-	Square(int x, int y, int a) : Rectangle(x, y, a, a) {}
+	Square(int x, int y, int a) : Point(x,y), Rectangle(x, y, a, a) {}
 };
 // -----------------------------------------------------------
 class CircleInSquare : public Circle, public Square{
 public:
-	CircleInSquare(int x, int y, int r) : Circle(x,y,r), Square(x,y,2*r) {}
+	CircleInSquare(int x, int y, int r) : Point(x,y), Circle(x,y,r), Square(x,y,2*r) {}
 	void show() const { Circle::show(); Square::show(); }
 	void hide() const { Square::hide(); Circle::hide(); }
 };
@@ -113,15 +122,22 @@ Shape* factory(){
 	return new Point(x, y);
 }
 // -----------------------------------------------------------
-
+void info(){
+	std::cout << "------------ Total shapes: " << Shape::count() << std::endl;
+    std::cout << "------------ Total circles: " << Circle::count() << std::endl;
+}
+// -----------------------------------------------------------
 int main(){
 	const int N = 10;
 	Shape* World[N];
 
+	info();
 	std::cout << "================== Create World ================\n";
 	for(int i = 0; i < N; ++i){
 		World[i] = factory();
 	}
+
+	info();
 
 	std::cout << "================== Show World ==================\n";
 	for(int i = 0; i < N; ++i){
@@ -138,9 +154,12 @@ int main(){
         World[i]->show();
     }
 
+	info();
 	std::cout << "================== Delete objects ===============\n";
 	for(int i=0; i < N; ++i){
 		delete World[i];
 	}
+
+	info();
 	return 0;
 }
