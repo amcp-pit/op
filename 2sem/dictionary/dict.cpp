@@ -46,6 +46,9 @@ int main(int argc, char* argv[]){
 	inFile.close();
 	std::cout << "Words: " << dictionary.size() << std::endl;
 	std::cout << "Capacity: " << dictionary.capacity() << std::endl;
+	std::cout << "sizeof(DictPara) : " << sizeof(DictPara) << std::endl;
+	std::cout << "overhead (minimum): " << (dictionary.capacity() - dictionary.size()) * sizeof (DictPara) << std::endl; 
+
 	for(size_t i=0; i < 10; ++i){
 		std::cout << dictionary[i];
 	}

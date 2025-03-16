@@ -19,12 +19,39 @@ stroka::stroka(const stroka& other){
     memcpy(data_, other.data_, size_);
 }
 
+stroka::stroka(stroka&& other) : size_(0), data_(nullptr){
+	swap(other) ;
+	/*
+	 size_ = other.size_;
+	 data_ = other.data_;
+	 other.size_ = 0;
+	 other.data_ = nullptr;
+	 */
+}
+
 stroka& stroka::operator=(const stroka& other){
 	if (this != &other){
+		/*
 		delete[] data_;
 	    size_ = other.size_;
 	    data_ = new char[size_];
 	    memcpy(data_, other.data_, size_);
+		*/
+		stroka tmp(other);
+		swap(tmp);
+	}
+	return *this;
+}
+
+stroka& stroka::operator=(stroka&& other){
+	if (this != &other) {
+	/*	 delete[] data_;
+		size_ = other.size_;
+		data_ = other.data_;
+		other.size_ = 0;
+		other.data_ = nullptr;
+	 */
+		swap(other);
 	}
 	return *this;
 }
@@ -84,4 +111,3 @@ bool operator>(const stroka& left, const stroka& right){
 bool operator>=(const stroka& left, const stroka& right){
     return strcmp(left.str(), right.str()) >= 0;
 }
-
