@@ -1,13 +1,13 @@
 #include <iostream>
 
 void foo(int& x) // try: const int&
-{ 
-	std::cout << "lvalue ref: " << x << "\n"; 
+{
+	std::cout << "lvalue ref: " << x << "\n";
 }
 
 void foo(int&& x) // try: const int&&
-{ 
-	std::cout << "rvalue ref: " << x << "\n"; 
+{
+	std::cout << "rvalue ref: " << x << "\n";
 	x = 1;
 }
 
@@ -23,11 +23,28 @@ class Fraction
 private:
 	int numerator_;
 	int denominator_;
-
+	int ID;
+	static int autoinc;
 public:
 	Fraction(int numerator = 0, int denominator = 1) :
-		numerator_(numerator), denominator_(denominator) {}
- 
+		numerator_(numerator), denominator_(denominator) 
+	{
+		ID = ++autoinc;
+        std::cout << "create (" << numerator_ << ", " << denominator_ << ")"<<" id: " << ID <<"\n";
+	}
+
+	Fraction& operator=(const Fraction& other) {
+		numerator_ = other.numerator_;
+		denominator_ = other.denominator_;
+		return *this;
+	}
+
+   Fraction& operator=(Fraction&& other) {
+        numerator_ = other.numerator_;
+        denominator_ = other.denominator_;
+        return *this;
+    }
+
 	friend std::ostream& operator<<(std::ostream& out, const Fraction &f1)
 	{
 		out << f1.numerator_ << "/" << f1.denominator_;
@@ -35,9 +52,11 @@ public:
 	}
 	~Fraction()
 	{
-		std::cout << "fraction(" << numerator_ << ", " << denominator_ << ") die\n";
-	} 
+		std::cout << "fraction(" << numerator_ << ", " << denominator_ << ") die id: "<< ID << "\n";
+	}
 };
+
+int Fraction::autoinc = 0;
 
 int main()
 {
@@ -56,7 +75,6 @@ int main()
 	std::cout << "foo(getValue()) => ";
 	foo(getValue());  // rvalue ref called
 
-
 	{
 		Fraction &&rref = Fraction(4, 7); // ссылка r-value на анонимный объект класса Fraction
 		std::cout << rref << '\n'; // используем ссылку r-value для вывода значения анонимного объекта класса Fraction
@@ -67,6 +85,8 @@ int main()
 	то его продолжительность жизни увеличивается до продолжительности жизни самой ссылки r-value, 
 	т. е. до конца блока {}, в коотором задана rref. 
 */
+
+	std::cout << "--------------------------- \n";
 	{
 		Fraction &&rref = Fraction(2, 3); // ссылка r-value на анонимный объект класса Fraction
 		std::cout << rref << '\n'; 

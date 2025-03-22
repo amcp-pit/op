@@ -14,6 +14,8 @@ public:
 	DictPara(DictPara&& other) : word_(std::move(other.word_)),
 								 translate_(std::move(other.translate_)) {}
 
+	DictPara(DictPara& other) : word_(other.word_), translate_(other.translate_){}
+
 	DictPara& operator=(const DictPara& other){
 		// Приходится реализовывать из-за наличия operator=(DictPara&&)
 		if (this!=&other){
@@ -22,7 +24,7 @@ public:
 		}
 		return *this;
 	}
-	
+
 	DictPara& operator=(DictPara&& other){
 		if (this!=&other){
 			word_ = std::move(other.word_);

@@ -8,20 +8,19 @@ class MyArray
 private:
 	T* array_;
 	int length_;
-
 public:
-	MyArray(int length) : array_(new T[length]), length_(length) 
+	MyArray(int length) : array_(new T[length]), length_(length)
 	{
 	}
 
-	~MyArray() 
-	{ 
-		delete[] array_; 
+	~MyArray()
+	{
+		delete[] array_;
 	}
 
-#if 1	
+#if 1
 	// Конструктор копирования
-	MyArray(const MyArray& arr)	: length_(arr.length_) 
+	MyArray(const MyArray& arr)	: length_(arr.length_)
 	{
 		array_ = new T[length_];
 		for (int i = 0; i < length_; ++i)
@@ -42,7 +41,7 @@ public:
 		}
 		return *this;
 	}
-#else	
+#else
 	// Конструктор копирования
 	MyArray(const MyArray& arr) = delete;
 
@@ -57,7 +56,7 @@ public:
 	}
 
 	// Оператор присваивания перемещением
-	MyArray& operator=(MyArray&& arr) noexcept 
+	MyArray& operator=(MyArray&& arr) noexcept
 	{
 		if (&arr != this) {
 			delete[] array_;

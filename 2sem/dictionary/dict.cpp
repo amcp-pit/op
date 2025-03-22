@@ -53,16 +53,43 @@ int main(int argc, char* argv[]){
 		std::cout << dictionary[i];
 	}
 
+	int counter = 10;
+	for(auto pos=dictionary.rbegin();
+		counter > 0 && pos!=dictionary.rend();
+		++pos, --counter){
+		std::cout << *pos;
+	}
+
+	dictionary.sort();
+
 	char word[128];
 	do{
 		std::cout << "> ";
 		std::cin.getline(word, 128);
 		DictPara what(word, "");
-		for(size_t i=0; i < dictionary.size(); ++i){
-			if (what == dictionary[i]){
-				std::cout << dictionary[i] << std::endl;
+/*
+        for(size_t i=0; i < dictionary.size(); ++i){
+            if (what == dictionary[i]){
+                std::cout << dictionary[i] << std::endl;
+            }
+        }
+*/
+/*		for(auto pos = dictionary.begin();
+			pos != dictionary.end();
+			++pos){
+			if (what == *pos){
+				std::cout << *pos << std::endl;
 			}
 		}
+*/
+		auto pos = dictionary.find( what );
+		for(int i=0; i<10000; ++i){
+			pos = dictionary.find( what );
+		}
+		if (pos != dictionary.end()){
+			std::cout << *pos << std::endl;
+		}
+
 	} while (stroka(word) != "");
 
 	return 0;
