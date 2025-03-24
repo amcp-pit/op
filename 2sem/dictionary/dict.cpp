@@ -3,6 +3,7 @@
 #include "stroka.h"
 #include "dictpara.h"
 #include "array.h"
+#include "list.h"
 
 std::ostream& operator<<(std::ostream& out, const DictPara& X){
 	out << X.get_word() << ": " << X.get_translate() << "\n";
@@ -38,7 +39,7 @@ int main(int argc, char* argv[]){
 	}
 
     DictPara X;
-	Array<DictPara> dictionary;
+	List<DictPara> dictionary;
     while(inFile.peek() != EOF){
         inFile >> X;
 		dictionary.push_back(X);
@@ -47,13 +48,23 @@ int main(int argc, char* argv[]){
 	std::cout << "Words: " << dictionary.size() << std::endl;
 	std::cout << "Capacity: " << dictionary.capacity() << std::endl;
 	std::cout << "sizeof(DictPara) : " << sizeof(DictPara) << std::endl;
-	std::cout << "overhead (minimum): " << (dictionary.capacity() - dictionary.size()) * sizeof (DictPara) << std::endl; 
+//	std::cout << "overhead (minimum): " << (dictionary.capacity() - dictionary.size()) * sizeof (DictPara) << std::endl; 
 
+/*
 	for(size_t i=0; i < 10; ++i){
 		std::cout << dictionary[i];
 	}
+*/
 
 	int counter = 10;
+    for(auto pos=dictionary.begin();
+        counter > 0 && pos!=dictionary.end();
+        ++pos, --counter){
+        std::cout << *pos;
+    }
+
+	counter = 10;
+
 	for(auto pos=dictionary.rbegin();
 		counter > 0 && pos!=dictionary.rend();
 		++pos, --counter){

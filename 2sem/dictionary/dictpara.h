@@ -7,14 +7,14 @@ class DictPara{
 	stroka translate_;
 public:
 	DictPara(): word_(""), translate_("") {}
-	DictPara(const stroka& word, const stroka& translate) : 
+	DictPara(const stroka& word, const stroka& translate) :
 			word_(word), translate_(translate){}
-	DictPara(stroka&& word, stroka&& translate) : 
+	DictPara(stroka&& word, stroka&& translate) :
 			word_(std::move(word)), translate_(std::move(translate)) {}
 	DictPara(DictPara&& other) : word_(std::move(other.word_)),
 								 translate_(std::move(other.translate_)) {}
 
-	DictPara(DictPara& other) : word_(other.word_), translate_(other.translate_){}
+	DictPara(const DictPara& other) : word_(other.word_), translate_(other.translate_){}
 
 	DictPara& operator=(const DictPara& other){
 		// Приходится реализовывать из-за наличия operator=(DictPara&&)
