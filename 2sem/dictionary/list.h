@@ -147,11 +147,23 @@ List<T>::List(List<T>&& other) noexcept{
 template <typename T>
 typename List<T>::iterator List<T>::find(const T& x)const{
 	Node* now = first;
-	while(now){
-		if(now->data == x){
-			return iterator(now);
+	if (isSorted){
+		while(now){
+			if (now->data < x){
+				now = now->next;
+			} else if (now->data == x){
+				return iterator(now);
+			} else {
+				break;
+			}
 		}
-		now = now->next;
+	} else {
+		while(now){
+			if(now->data == x){
+				return iterator(now);
+			}
+			now = now->next;
+		}
 	}
 	return end();
 }
