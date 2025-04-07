@@ -196,6 +196,31 @@ void AVLTree<T>::erase(const typename AVLTree<T>::iterator& pos){
 		toDelete->left->parent = alt;
 	}
 
+	Node *notBalanced;
+	if (alt == nullptr){
+		// удаляется сам toDelete
+		notBalanced = toDelete->parent;
+		if (notBalanced != nullptr){
+			if (notBalanced->left == toDelete)
+				notBalanced->balance += 1;
+			else
+				notBalanced->balance -= 1;
+		}
+	} else {
+		alt->balance = toDelete->balance;
+		if (alt->parent == toDelete){
+			notBalanced = alt;
+			if (alt == toDelete->left)
+				notBalanced->balance += 1;
+			else
+				notBalanced->balance -= 1;
+		} else {
+			notBalanced = alt->parent;
+			notBalanced->balance += 1;
+		}
+	}
+
+
 	// Разбираемся с родителем узла toDelete
 	if (toDelete->parent == nullptr)
 		root = alt;
@@ -211,6 +236,33 @@ void AVLTree<T>::erase(const typename AVLTree<T>::iterator& pos){
 	toDelete->right = nullptr;
 	toDelete->left = nullptr;
 	delete toDelete;
+
+	while(notBalanced){
+		switch(notBalanced->balance){
+		case 2:
+			if (notBalanced->right->balance == -1)
+				notBalanced = bigLeftRotate(notBalanced);
+			else
+				notBalanced = leftRotate(notBalanced);
+			break;
+		case -2:
+            if (notBalanced->left->balance == 1)
+                notBalanced = bigRightRotate(notBalanced);
+            else
+                notBalanced = rightRotate(notBalanced);
+            break;
+		}
+		if (notBalanced->balance == 1 || notBalanced->balance == -1)
+			break;
+		if (notBalanced->parent){
+			if (notBalanced->parent->left == notBalanced)
+				notBalanced->parent->balance += 1;
+			else
+				notBalanced->parent->balance -= 1;
+		}
+		notBalanced = notBalanced->parent;
+	}
+
 
 	--count;
 }

@@ -1,8 +1,9 @@
 #include <iostream>
 #include "bintree.h"
+#include "avltree.h"
 
 int main(){
-	BinTree<int> tree;
+	AVLTree<int> tree;
 	for(int i=0; i<20; ++i){
 		int tmp = rand()%1000;
 		tree.insert(tmp);
