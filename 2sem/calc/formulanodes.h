@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include "errors.h"
 
 class FormulaNode{
 public:
@@ -40,6 +41,7 @@ public:
 		double tmp;
 		std::cout << param << " = ";
 		std::cin >> tmp;
+		std::cin.ignore();
 		return tmp;
 	}
 };
@@ -84,7 +86,11 @@ public:
 class DivideNode : public BinNode {
 public:
     DivideNode(FormulaNode* L, FormulaNode* R) : BinNode(L, R) {}
-    double calc() const { return left->calc() / right->calc(); }
+    double calc() const {
+		double denum = right->calc();
+		if (denum == 0.0) throw ErrorDivideByZero();
+		return left->calc() / denum;
+	}
     std::string str() const { return "(" + left->str() + ") / (" + right->str() + ")"; }
     std::string tex() const { return "\\frac{" + left->tex() + "}{" + right->tex() +"}"; }
 };
