@@ -58,6 +58,21 @@ public:
     }
 };
 
+class ErrorRValue : public Error {
+public:
+	std::string what() const {
+		return std::string("To the left of = should be lvalue");
+	}
+};
 
+class ErrorUnknownFunction : public Error {
+	std::string str;
+public:
+	ErrorUnknownFunction(const char * s) : str(s) {}
+	ErrorUnknownFunction(char s): str(1, s) {}
+	std::string what()const {
+		return std::string("Unknown function name '")
+			   + str + std::string("'");}
+};
 
 #endif

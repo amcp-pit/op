@@ -12,6 +12,7 @@ int main(){
 		while(true){
 			std::cout << "> ";
 			std::cin.getline(str, 1024);
+			if (strlen(str) == 0) continue;
 			if (strcmp(str,"quit") == 0)
 				break;
 			try {
@@ -27,28 +28,5 @@ int main(){
 	} catch(...){
 		std::cout << "Unknown error" << std::endl;
 	}
-/*
-	FormulaNode *a, *b, *c;
-	a = new ParamNode('y');
-	b = new ParamNode('z');
-	c = new MultNode(a, b);
-
-	a = new ParamNode('x');
-	c = new MinusNode(a, c);
-
-	a = new ParamNode('a');
-	b = new ParamNode('b');
-	a = new PlusNode(a, b);
-
-	c = new DivideNode(c , a);
-
-	c = new PowNode(new NumNode(2), c);
-
-	std::cout << c->str() << std::endl;
-	double result = c->calc();
-	std::cout << c->str() << " = " << result << std::endl;
-
-	std::cout << "TeX: " << c->tex() << std::endl;
-*/
 	return 0;
 }

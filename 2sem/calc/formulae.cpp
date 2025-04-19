@@ -36,6 +36,11 @@ FormulaNode* Formula::Postfix2Tree(const char * str){
                 if (S.empty()) throw 1; left = S.top();  S.pop();
                 result = new PowNode(left, right);
                 break;
+		case '=':
+                if (S.empty()) throw 1; right = S.top(); S.pop();
+                if (S.empty()) throw 1; left = S.top();  S.pop();
+                result = new AssignmentNode(left, right);
+                break;
 		default:
 			if (ch>='0' && ch<='9')
 				result = new NumNode(ch-'0');
@@ -67,15 +72,16 @@ FormulaNode* Formula::Postfix2Tree(const char * str){
 }
 //-------------------------------------------
 
-const unsigned char ActionsTable[][9] = {
-//   0 + - * / ^ ( ) P
-	{5,2,2,2,2,2,2,6,1}, // empty
-    {3,3,3,2,2,2,2,3,1}, // +
-    {3,3,3,2,2,2,2,3,1}, // -
-    {3,3,3,3,3,2,2,3,1}, // *
-    {3,3,3,3,3,2,2,3,1}, // /
-    {3,3,3,3,3,2,2,3,1}, // ^
-    {7,2,2,2,2,2,2,4,1}  // (
+const unsigned char ActionsTable[][10] = {
+//   0 + - * / ^ ( ) P =
+	{5,2,2,2,2,2,2,6,1,2}, // empty
+    {3,3,3,2,2,2,2,3,1,8}, // +
+    {3,3,3,2,2,2,2,3,1,8}, // -
+    {3,3,3,3,3,2,2,3,1,8}, // *
+    {3,3,3,3,3,2,2,3,1,8}, // /
+    {3,3,3,3,3,2,2,3,1,8}, // ^
+    {7,2,2,2,2,2,2,4,1,8}, // (
+	{3,2,2,2,2,2,2,6,1,2}  // =
 };
 
 int actionsRowNumber(char ch){
@@ -87,8 +93,9 @@ int actionsRowNumber(char ch){
     case '/' : return 4;
     case '^' : return 5;
     case '(' : return 6;
+	case '=' : return 7;
 	}
-	return 7;
+	return 0;
 }
 
 int actionsColNumber(char ch){
@@ -101,11 +108,12 @@ int actionsColNumber(char ch){
     case '^' : return 5;
     case '(' : return 6;
 	case ')' : return 7;
+	case '=' : return 9;
   	}
     if (ch>='a' && ch<='z') return 8;
     if (ch>='A' && ch<='Z') return 8;
     if (ch>='0' && ch<='9') return 8;
-	return 9;
+	return 0;
 }
 
 void Formula::Infix2Postfix(const char *instr, char *outstr){
@@ -125,6 +133,7 @@ void Formula::Infix2Postfix(const char *instr, char *outstr){
         case 5: outstr[j] = '\0'; break;
         case 6: throw ErrorBracketsClose(instr, i); break;
         case 7: throw ErrorBracketsOpen(instr, i); break;
+		case 8: throw ErrorRValue(); break;
 		}
 	} while(action!=5);
 }
