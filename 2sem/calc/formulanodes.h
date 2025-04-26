@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <cmath>
+#include "mymath.h"
 #include "errors.h"
 #include "avltree.h"
 
@@ -179,63 +180,101 @@ public:
 	}
 };
 //-----------------------------------------
-struct Func{
-	unsigned char shortName;
-	const char* name;
-	double (*fun)(double);
-};
-double sign(double x) {return x==0 ? 0 : (x<0 ? -1.0 : 1.0);}
-double sqr(double x) {return x*x;}
+typedef double (*pFunction)(double);
 
-const Func FTable[] = {
-	{128, "arcsin", std::asin},
-	{129, "arccos", std::acos},
-	{130, "sin", std::sin},
-	{131, "cos", std::cos},
-	{132, "arctg", std::atan},
-	{133, "tg", std::tan},
-	{134, "ln", std::log},
-	{135, "exp", std::exp},
-	{136, "sqrt", std::sqrt},
-	{137, "sh", std::sinh},
-	{138, "ch", std::cosh},
-	{139, "abs", std::fabs},
-	{140, "sign", sign},
-	{141, "sqr", sqr}
+class FunctionsTable{
+
+	struct Func{
+		unsigned char shortName;
+		const char* name;
+		pFunction fun;
+	};
+/*
+	static const Func FTable[];
+	static const int sizeFTable;
+*/
+	static constexpr const Func FTable[] = {
+		{128, "arcsin", std::asin},
+		{129, "arccos", std::acos},
+		{130, "sin", std::sin},
+		{131, "cos", std::cos},
+		{132, "arctg", std::atan},
+		{133, "tg", std::tan},
+		{134, "ln", std::log},
+		{135, "exp", std::exp},
+		{136, "sqrt", std::sqrt},
+		{137, "sh", std::sinh},
+		{138, "ch", std::cosh},
+		{139, "abs", std::fabs},
+		{140, "sign", sign},
+		{141, "sqr", sqr}
+	};
+	static const int sizeFTable = sizeof(FTable)/sizeof(FTable[0]);
+
+public:
+	static int getID(char s){
+		unsigned char shortName = static_cast<unsigned char>(s);
+	    for(int i=0; i<sizeFTable; ++i){
+    	    if (FTable[i].shortName == shortName) return i;
+		}
+	    throw ErrorUnknownFunction(s);
+	}
+
+	static int getID(const char *s){
+	    for(int i=0; i<sizeFTable; ++i){
+    	    if (strcmp(FTable[i].name, s) == 0) return i;
+		}
+    	throw ErrorUnknownFunction(s);
+	}
+
+	static const char* getName(int id){
+        if (id<0 || id>=sizeFTable)
+            throw ErrorOutOfBounds(0, sizeFTable, id);
+        return FTable[id].name;
+	}
+	static const char* getName(char s){
+        return getName(getID(s));
+	}
+	static char getShortName(int id){
+        if (id<0 || id>=sizeFTable)
+            throw ErrorOutOfBounds(0, sizeFTable, id);
+        return static_cast<char>(FTable[id].shortName);
+	}
+	static char getShortName(const char *s){
+        return getShortName(getID(s));
+	}
+	static pFunction get(int id){
+		if (id<0 || id>=sizeFTable)
+			throw ErrorOutOfBounds(0, sizeFTable, id);
+		return FTable[id].fun;
+	}
+	static pFunction get(char s){
+        return get(getID(s));
+	}
+	static pFunction get(const char *s){
+		return get(getID(s));
+	}
 };
 //-----------------------------------------
-const int sizeFTable = sizeof(FTable)/sizeof(FTable[0]);
-
-int FunNumberByShortName(char s){
-	for(int i=0; i<sizeFTable; ++ i)
-		if (FTable[i].shortName == s) return i;
-	throw ErrorUnknownFunction(s);
-}
-//-----------------------------------------
-
-int FunNumberByName(const char *s){
-    for(int i=0; i<sizeFTable; ++ i)
-        if (strcmp(FTable[i].name, s) == 0) return i;
-    throw ErrorUnknownFunction(s);
-}
+extern FunctionsTable FunTable;
 //-----------------------------------------
 class FuncNode : public UnarNode{
 	int fnum;
 public:
 	FuncNode(char s, FormulaNode* node) : UnarNode(node){
-		fnum = FunNumberByShortName(s);
+		fnum = FunTable.getID(s);
 	}
 	FuncNode(const char *s, FormulaNode* node) : UnarNode(node){
-        fnum = FunNumberByName(s);
+        fnum = FunTable.getID(s);
     }
 	double calc() const {
-		return (FTable[fnum].fun)(next->calc());
+		return (FunTable.get(fnum))(next->calc());
 	}
 	std::string str() const {
-		return std::string(FTable[fnum].name) + "(" + next->str() + ")";
+		return std::string(FunTable.getName(fnum)) + "(" + next->str() + ")";
 	}
     std::string tex() const {
-        return "\\" + std::string(FTable[fnum].name) + "(" + next->str() + ")";
+        return "\\" + std::string(FunTable.getName(fnum)) + "(" + next->str() + ")";
     }
 };
 

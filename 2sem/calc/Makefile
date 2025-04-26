@@ -1,3 +1,3 @@
 all:
-	g++ calc.cpp formulae.cpp formulanodes.cpp -o calc
+	g++ calc.cpp formulae.cpp formulanodes.cpp mymath.cpp -o calc
 
