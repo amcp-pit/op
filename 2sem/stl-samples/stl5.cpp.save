@@ -1,0 +1,65 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <algorithm>
+#include <iterator>
+
+using namespace std;
+
+template <typename T>
+void insert_elements(T& M, int first, int last){
+	for(int i=first; i<=last; ++i)
+		M.insert(M.end(), i);
+}
+
+template <typename T>
+void print_elements(const T& M, const char* optstr=""){
+	cout << optstr;
+	for(auto pos=M.begin(); pos!=M.end(); ++pos){
+		cout << ' ' << *pos;
+	}
+	cout << endl;
+}
+
+void print(int Element){
+	cout << "x"<<Element<<", ";
+}
+
+void add10(int &Element){
+	Element += 10;
+}
+
+template <typename T>
+class AddValue{
+	T theValue;
+public:
+	AddValue(const T & v) : theValue(v) {}
+	void operator()(T& element) { element += theValue++; }
+};
+
+int main() {
+	vector<int> A;
+	insert_elements(A, 1, 15);
+	print_elements(A, "A = ");
+	copy(A.begin(), A.end(), ostream_iterator<int>(cout, " "));
+	cout << endl;
+
+	cout << "One more time: ";
+	for_each(A.begin(), A.end(), print);
+    cout << endl;
+    cout << "reversed: ";
+    for_each(A.rbegin(), A.rend(), print);
+    cout << endl;
+
+    for_each(A.begin(), A.end(), add10);
+    print_elements(A, "after add10 = ");
+
+    for_each(A.begin(), A.end(), AddValue<int>(100));
+    print_elements(A, "after AddValue<int>(100) = ");
+
+    for_each(A.begin(), A.end(), AddValue<int>(-50));
+    print_elements(A, "after AddValue<int>(100) = ");
+
+
+}
+
