@@ -49,7 +49,8 @@ int main(){
 
 	const char dbfilename[] = "students.db";
 	student tmp;
-	int number, index;
+	int number;
+	Index* index;
 
 	int action;
 	do{
@@ -75,7 +76,7 @@ int main(){
 		case 6:
 				number = get_int();
 				index = findRecord(DB, number);
-				if (index >=0 ){
+				if (!eodb(index)){
 					tmp = getRecord(DB, index);
 					setMarks(tmp);
 					updateRecord(DB, index, tmp);
@@ -86,7 +87,7 @@ int main(){
 		case 7:
 			number = get_int();
 			index = findRecord(DB, number);
-			if (index != -1){
+			if (!eodb(index)){
 				std::cout << "Are you sure? (Y/N)";
 				char ch[128];
 				std::cin.get(ch, 128);

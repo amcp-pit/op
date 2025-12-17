@@ -6,6 +6,10 @@ struct Node {
 	Node* next;
 };
 
+struct Index {
+	Node* current;
+};
+
 struct Database {
 	int count;
 	Node* begin;
@@ -112,19 +116,20 @@ bool exportDB(const Database* DB, const char filename[]){
 	return true;
 }
 
-int findRecord(const Database* DB, int what){
-	// TODO: Надо избавиться от индекса, так как он идеалогически чужд спискам
-	int index = 0;
-
+Index* findRecord(const Database* DB, int what){
     Node* current = DB->begin;
     while(current){
-		if (current->data.number == what)
-			return index;
-		++index;
+        if (current->data.number == what)
+            break;
         current = current->next;
     }
+	Index * tmp = new Index;
+	tmp->current = current;
+	return tmp;
+}
 
-	return -1;
+bool eodb(Index * index){
+	return index->current == nullptr;
 }
 
 Node* getNode(const Database* DB, int index){
@@ -139,22 +144,20 @@ Node* getNode(const Database* DB, int index){
 	return nullptr;
 }
 
-void updateRecord(Database* DB, int index, const student &x){
-	Node* current = getNode(DB, index);
-	if (current){
-		current->data = x;
+void updateRecord(Database* DB, Index *index, const student &x){
+	if (index->current){
+		index->current->data = x;
 	}
 }
 
-student getRecord(const Database* DB, int index){
+student getRecord(const Database* DB, Index *index){
 	student tmp{};
-	Node* current = getNode(DB, index);
-	if (current) tmp = current->data;
+	if (index->current) tmp = index->current->data;
 	return tmp;
 }
 
-void deleteRecord(Database* DB, int index){
-	Node* current = getNode(DB, index);
+void deleteRecord(Database* DB, Index* index){
+	Node * current = index->current;
 	if (current==nullptr) return;
 
 	if (current->prev){
@@ -174,7 +177,70 @@ void deleteRecord(Database* DB, int index){
 }
 
 void sort(Database* DB, bool (*comparator) (const student&, const student&)){
+	if (DB->begin == DB->end) {
+		return;
+	}
+	bool isSorted = false;
+	do{
+		// Split
+		Database tmp[2];
+		tmp[0].begin = tmp[0].end = nullptr;
+        tmp[1].begin = tmp[1].end = nullptr;
 
-	// TODO: сортировка естественное слияние
+		unsigned char p = 0; // Номер текущего списка (того, куда добавляем)
+		tmp[p].begin = tmp[p].end = DB->begin;
+		DB->begin = DB->begin->next;
 
+		while(DB->begin != nullptr){
+			// Выбираем куда добавлять
+			if (comparator(DB->begin->data, tmp[p].end->data)){
+				p = !p; // p = 1 - p;
+			}
+
+			if (tmp[p].begin)
+				tmp[p].end->next = DB->begin;
+			else
+				tmp[p].begin = DB->begin;
+
+			tmp[p].end = DB->begin;
+			DB->begin = DB->begin->next;
+		}
+		if (tmp[0].end) tmp[0].end->next = nullptr;
+		if (tmp[1].end) tmp[1].end->next = nullptr;
+
+		// Merge
+		if (tmp[!p].begin) {
+			// Значит два списка получилось
+			p = comparator(tmp[0].begin->data, tmp[1].begin->data) ? 0 : 1;
+			DB->begin = DB->end = tmp[p].begin;
+			tmp[p].begin = tmp[p].begin->next;
+			while(tmp[p].begin){
+				bool sp = comparator(tmp[p].begin->data, DB->end->data);
+				bool snotp = comparator(tmp[!p].begin->data, DB->end->data);
+				if (sp == snotp){
+					 p = comparator(tmp[0].begin->data, tmp[1].begin->data) ? 0 : 1;
+				} else {
+					if (sp) p = !p;
+				}
+				DB->end->next = tmp[p].begin;
+				DB->end = DB->end->next;
+				tmp[p].begin = tmp[p].begin->next;
+			}
+			DB->end->next = tmp[!p].begin;
+			DB->end = tmp[!p].end;
+
+		} else {
+			DB->begin = tmp[p].begin;
+			DB->end = tmp[p].end;
+			isSorted = true;
+		}
+	} while(!isSorted);
+
+	// Восстановить двухсвязность для списка
+	Node* current = DB->begin;
+	DB->begin->prev = nullptr;
+	while(current->next){
+		current->next->prev = current;
+		current = current->next;
+	}
 }
