@@ -1,0 +1,10 @@
+apple
+100
+orange
+160
+pineapple
+250
+banana
+90
+carrot
+50

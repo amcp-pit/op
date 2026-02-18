@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <fstream>
 
 class goods{
 	char * name_;
@@ -37,3 +38,5 @@ public:
 };
 
 std::ostream& operator<< (std::ostream&, const goods&);
+std::ofstream& operator<< (std::ofstream&, goods&);
+std::ifstream& operator>> (std::ifstream&, goods&);

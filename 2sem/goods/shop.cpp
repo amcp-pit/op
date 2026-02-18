@@ -20,6 +20,7 @@ void eat(goods x){
 
 int main(){
 	info();
+	const char *dbname = "basa.txt";
 	const int N = 5;
 	goods shop[N] = {
 					 goods("apple", 140.0),
@@ -34,11 +35,32 @@ int main(){
 	shop[N-1] = goods("tomato", 350.0);
 	shop[0] = shop[0];
 	print(shop, N);
+
+	std::cout << "----------- Read from file -------------\n";
+	std::ifstream inFile(dbname);
+	if (inFile){
+		int i = 0;
+		while(inFile.peek()!=EOF && i<N){
+			inFile >> shop[i];
+			++i;
+		}
+		inFile.close();
+	}
+	print(shop, N);
+
 	std::cout << "********** Christmas discount **********\n";
 	// goods::percent = 0.0;
 	shop[0].setPercent(0.1);
 	print(shop, N);
 	goods::setPercent(0.01);
 	print(shop, N);
+
+	std::ofstream outFile(dbname);
+	if (outFile){
+		for(int i=0; i<N; ++i){
+			outFile << shop[i];
+		}
+		 outFile.close();
+	}
 	return 0;
 }
