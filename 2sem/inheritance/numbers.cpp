@@ -7,6 +7,7 @@ public:
 	number(int x = 0) : value_(x) {}
 	void setval(int x) { value_ = (x < 0) ? -x : x; }
 	virtual void show() = 0; // pure virtual
+	virtual ~number() { std::cout << "Kill like number" << std::endl; }
 };
 // class number abstract class, because show() is pure virtual
 
@@ -15,12 +16,14 @@ class dectype : public number {
 public:
 	dectype(int x=0) : number(x) {}
 	void show() {std::cout << "Decimal: " << std::dec << value_ << std::endl;}
+	~dectype() { std::cout << "Kill like decimal " << std::endl; }
 };
 
 class octtype : public number {
 public:
 	octtype(int x=0) : number(x) {}
     void show() {std::cout << "Octal: 0" << std::oct << value_ << std::endl;}
+    ~octtype() { std::cout << "Kill like oct " << std::endl; }
 };
 
 
@@ -28,6 +31,7 @@ class hextype : public number {
 public:
 	hextype(int x=0) : number(x) {}
     void show() {std::cout << "Hex: 0x" << std::hex << value_ << std::endl;}
+    ~hextype() { std::cout << "Kill like hex " << std::endl; }
 };
 
 
