@@ -24,7 +24,7 @@ void info() {
 	std::cout << "------------- Total shapes: " << Shape::count() << std::endl;
 }
 
-class Point : public Shape {
+class Point : virtual public Shape {
 protected:
 	int x0, y0;
 public:
@@ -38,10 +38,14 @@ public:
     virtual void hide() const {
         std::cout << "Hide point . #" << id() << "(" << x0 << ", " << y0 << ")\n";
     }
+	void move(int dx, int dy) {
+		x0 += dx;
+		y0 += dy;
+	}
 	virtual ~Point() { hide(); }
 };
 
-class Circle : public Point {
+class Circle : virtual public Point {
 	int R;
 public:
 	Circle(int x, int y, int r) : Point(x, y), R(r) {
@@ -57,11 +61,57 @@ public:
 	~Circle() { hide(); }
 };
 
+class Rectangle : virtual public Point {
+	int width_, height_;
+public:
+	Rectangle(int x, int y, int width, int height) : Point(x, y), height_(height), width_(width) {
+		std::cout << "+ create rectangle. ";
+		show();
+	}
+	void show() const {
+		if (width_ == height_) {
+			std::cout << "Show square [] ";
+		} else {
+			std::cout << "Show rectangle [___] ";
+		}
+		std::cout << "#" << id() << " ("
+				  << x0-width_/2 << ", " << y0-height_/2 << ", "
+				  << x0+width_/2 << ", " << y0+height_/2 << ")\n";
+	}
+	void hide() const {
+        if (width_ == height_) {
+            std::cout << "Hide square [] ";
+        } else {
+            std::cout << "Hide rectangle [___] ";
+        }
+
+        std::cout << "#" << id() << " ("
+                  << x0-width_/2 << ", " << y0-height_/2 << ", "
+                  << x0+width_/2 << ", " << y0+height_/2 << ")\n";
+	}
+	~Rectangle() { hide(); }
+};
+
+class Square : public Rectangle {
+public:
+	Square(int x, int y, int a) : Point(x, y), Rectangle(x, y, a, a) {}
+};
+
+class CircleInSquare : public Circle, public Square {
+public:
+	CircleInSquare(int x, int y, int r) : Point(x, y), Circle(x, y, r), Square(x, y, 2*r) {}
+	void show() const { Circle::show(); Square::show(); }
+	void hide() const { Square::hide(); Circle::hide(); }
+};
+
 Shape* factory() {
 	int x = rand()%80 + 10;
 	int y = rand()%80 + 10;
-	switch(rand()%2){
+	switch(rand()%5){
 	case 1: return new Circle(x, y, 1 + rand()%10);
+	case 2: return new Rectangle(x, y, 2*(12+rand()%10), 2*(2+rand()%5));
+	case 3: return new Square(x, y, 2*(2+rand()%10));
+	case 4: return new CircleInSquare(x, y, 1+rand()%10);
 	}
 	return new Point(x, y);
 }
@@ -92,7 +142,17 @@ int main() {
 
 	info();
 
-//    std::cout << "================= Move objects  =================\n";
+    std::cout << "================= Move objects  =================\n";
+    for(int i = 0; i < N; ++i) {
+		(dynamic_cast<Point*>(World[i]))->move(10, 10);
+	}
+
+    std::cout << "=================  Show World  =================\n";
+    for(int i = 0; i < N; ++i) {
+        World[i] -> show();
+    }
+
+    info();
 
 	std::cout << "================= Delete objects =================\n";
     for(int i = 0; i < N; ++i) {
@@ -100,6 +160,14 @@ int main() {
     }
 
 	info();
+	std::cout << "sizeof(int) = " << sizeof(int) <<std::endl;
+    std::cout << "sizeof(int*) = " << sizeof(int*) <<std::endl;
+	std::cout << "sizeof(Point) = " << sizeof(Point) << std::endl;
+    std::cout << "sizeof(Circle) = " << sizeof(Circle) << std::endl;
+    std::cout << "sizeof(Rectangle) = " << sizeof(Rectangle) << std::endl;
+    std::cout << "sizeof(Square) = " << sizeof(Square) << std::endl;
+    std::cout << "sizeof(CircleInSquare) = " << sizeof(CircleInSquare) << std::endl;
+
 
 	return 0;
 }
