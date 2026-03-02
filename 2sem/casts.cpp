@@ -60,6 +60,9 @@ void myfunction(Parent & p){
 
 
 int main() {
+    /*********************************************
+    * static_cast                                *
+    *********************************************/
 	int a = 1, b = 2;
 	double c;
 	c = a / b;
@@ -71,12 +74,14 @@ int main() {
 	c = 1.0 / static_cast<double>(b);
     std::cout << "c = 1 / b = " << c << std::endl;
 
+	/*********************************************
+	* const_cast                                 *
+	*********************************************/
 	char ss[] = "Hello";
 	std::cout << ss << std::endl;
 	ss[0] = 'h';
     std::cout << ss << std::endl;
 //	++ss;
-//    std::cout << ss << std::endl;
 
 	const char *str = "Hello 2";
 //	str[0] = 'h';
@@ -94,6 +99,9 @@ int main() {
 
     std::cout << str << std::endl;
 
+    /*********************************************
+    * dynamic_cast                               *
+    *********************************************/
 	Parent p;
 	p.foo();
 	p.bar();
@@ -116,6 +124,32 @@ int main() {
 
     std::cout << "4 Child:\n";
     myfunction(ch);
+
+    /*********************************************
+    * reinterpret_cast                           *
+    *********************************************/
+	struct { double x; float y; } S;
+	S.x = 1.0;
+	S.y = 2.7;
+
+	double *f;
+	f = reinterpret_cast<double*>(&S);
+	std::cout << "*f = " << *f << std::endl;
+
+	*f = 2.0;
+	std::cout << "S.x = " << S.x << std::endl;
+    std::cout << "S.y = " << S.y << std::endl;
+
+	unsigned long *z;
+	z = reinterpret_cast<unsigned long*>(&S);
+    std::cout << "*z = " << *z << std::endl;
+    std::cout << "z = " << z << std::endl;
+    std::cout << "&S = " << &S << std::endl;
+
+    unsigned long d;
+    d = reinterpret_cast<unsigned long>(&S);
+    std::cout << "d = " << d << std::endl;
+    std::cout << "&S = " << &S << std::endl;
 
 
 	return 0;
