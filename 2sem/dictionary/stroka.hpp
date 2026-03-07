@@ -24,14 +24,6 @@ public:
 	    memcpy(data_, other.data_, size_);
 	}
 
-	stroka(stroka&& other) noexcept : size_(0), data_(nullptr) {
-		swap(other);
-	}
-
-	~stroka() { 
-		delete[] data_; 
-	}
-
 	stroka& operator=(const stroka& other) {
 		if (this != &other){
 			stroka tmp(other);
@@ -40,11 +32,21 @@ public:
 		return *this;
 	}
 
+#ifndef NOMOVESEMANTICS
+	stroka(stroka&& other) noexcept : size_(0), data_(nullptr) {
+		swap(other);
+	}
+
 	stroka& operator=(stroka&& other) noexcept {
 		if (this != &other) {
 			swap(other);
 		}
 		return *this;
+	}
+#endif
+
+	~stroka() { 
+		delete[] data_; 
 	}
 
 	size_t length() const { return strlen(data_); }
@@ -62,7 +64,6 @@ public:
 };
 
 stroka operator+(const stroka&, const stroka&);
-std::ostream& operator<< (std::ostream&, const stroka&);
 
 bool operator==(const stroka&, const stroka&);
 bool operator!=(const stroka&, const stroka&);
@@ -70,5 +71,7 @@ bool operator<(const stroka&, const stroka&);
 bool operator<=(const stroka&, const stroka&);
 bool operator>(const stroka&, const stroka&);
 bool operator>=(const stroka&, const stroka&);
+
+std::ostream& operator<< (std::ostream&, const stroka&);
 
 #endif

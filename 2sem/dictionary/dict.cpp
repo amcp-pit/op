@@ -15,6 +15,22 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 
+/*
+	DictPara X;
+	char word[128];
+	std::cout << "> ";
+	std::cin.getline(word, 128);
+	DictPara what(word, "");
+	while(inFile.peek() != EOF){
+        	inFile >> X;
+		if (X == what) {
+			std::cout << *pos << std::endl;
+			break;
+		}
+	}
+
+*/
+
 /* TODO:
     DictPara X;
 	Array<DictPara> dictionary;
