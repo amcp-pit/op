@@ -11,8 +11,8 @@ class stroka{
 		std::swap(size_, other.size_);
 	}
 public:
-	stroka(const char * str="") : size_(strlen(str) + 1), data_(new char[size_]) {
-	    memcpy(data_, str, size_);
+	stroka(const char * str="") : size_(std::strlen(str) + 1), data_(new char[size_]) {
+	    std::memcpy(data_, str, size_);
 	}
 
 	stroka(char ch) : size_(4), data_(new char[size_]) {
@@ -21,7 +21,7 @@ public:
 	}
 
 	stroka(const stroka& other) : size_(other.size_), data_(new char[size_]) {
-	    memcpy(data_, other.data_, size_);
+	    std::memcpy(data_, other.data_, size_);
 	}
 
 	stroka& operator=(const stroka& other) {
@@ -45,13 +45,13 @@ public:
 	}
 #endif
 
-	~stroka() { 
-		delete[] data_; 
+	~stroka() {
+		delete[] data_;
 	}
 
-	size_t length() const { return strlen(data_); }
+	size_t length() const { return std::strlen(data_); }
 	size_t size() const { return size_; }
-	const char* str() const {return data_;}
+	const char* str() const { return data_; }
 
 	char operator[] (size_t index) const {
 		if (index >= size_){

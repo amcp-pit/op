@@ -6,11 +6,11 @@ stroka& stroka::operator+=(const stroka& other) {
 	if (len1 + len2 + 1 > size_){
 		size_ = len1 + len2 + 1;
 		char * tmp = new char [size_];
-		memcpy(tmp, data_, len1);
+		std::memcpy(tmp, data_, len1);
 		delete[] data_;
 		data_ = tmp;
 	}
-	memcpy(data_+len1, other.data_, len2 + 1);
+	std::memcpy(data_+len1, other.data_, len2 + 1);
 	return *this;
 }
 
@@ -26,25 +26,25 @@ std::ostream& operator<< (std::ostream& out, const stroka& X) {
 }
 
 bool operator==(const stroka& left, const stroka& right) {
-	return strcmp(left.str(), right.str()) == 0;
+	return std::strcmp(left.str(), right.str()) == 0;
 }
 
 bool operator!=(const stroka& left, const stroka& right) {
-    return strcmp(left.str(), right.str()) != 0;
+    return std::strcmp(left.str(), right.str()) != 0;
 }
 
 bool operator<(const stroka& left, const stroka& right) {
-    return strcmp(left.str(), right.str()) < 0;
+    return std::strcmp(left.str(), right.str()) < 0;
 }
 
 bool operator<=(const stroka& left, const stroka& right) {
-    return strcmp(left.str(), right.str()) <= 0;
+    return std::strcmp(left.str(), right.str()) <= 0;
 }
 
 bool operator>(const stroka& left, const stroka& right) {
-    return strcmp(left.str(), right.str()) > 0;
+    return std::strcmp(left.str(), right.str()) > 0;
 }
 
 bool operator>=(const stroka& left, const stroka& right) {
-    return strcmp(left.str(), right.str()) >= 0;
+    return std::strcmp(left.str(), right.str()) >= 0;
 }

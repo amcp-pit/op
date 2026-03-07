@@ -1,6 +1,30 @@
 #include <iostream>
 #include <fstream>
 #include "stroka.hpp"
+#include "dictpara.hpp"
+#include "array.hpp"
+
+std::ostream& operator<< (std::ostream& out, const DictPara& X) {
+	out << X.get_word()<<": " << X.get_translate() << "\n";
+	return out;
+}
+
+std::ifstream& operator>> (std::ifstream& in, DictPara& X) {
+	char buf[1024];
+	in.getline(buf, 1024);
+	char* p = buf;
+	while( (*p!='\t') && (*p!='\0')){
+		++p;
+	}
+	if (*p != '\0') {
+		*p= '\0';
+		++p;
+	}
+	X = DictPara(buf, p);
+	return in;
+}
+
+
 
 int main(int argc, char* argv[]){
 	if (argc!=2){
@@ -22,16 +46,14 @@ int main(int argc, char* argv[]){
 	std::cin.getline(word, 128);
 	DictPara what(word, "");
 	while(inFile.peek() != EOF){
-        	inFile >> X;
+        inFile >> X;
 		if (X == what) {
-			std::cout << *pos << std::endl;
+			std::cout << X << std::endl;
 			break;
 		}
 	}
-
 */
 
-/* TODO:
     DictPara X;
 	Array<DictPara> dictionary;
 
@@ -40,7 +62,7 @@ int main(int argc, char* argv[]){
         inFile >> X;
 		dictionary.push_back(X);
     }
-*/
+
 	inFile.close();
 
 /* TODO:
