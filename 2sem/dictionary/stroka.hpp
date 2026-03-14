@@ -35,12 +35,14 @@ public:
 #ifndef NOMOVESEMANTICS
 	stroka(stroka&& other) noexcept : size_(0), data_(nullptr) {
 		swap(other);
+//		std::cout << "ms ctor stroka\n";
 	}
 
 	stroka& operator=(stroka&& other) noexcept {
 		if (this != &other) {
 			swap(other);
 		}
+//		std::cout << "ms operator= stroka\n";
 		return *this;
 	}
 #endif

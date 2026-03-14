@@ -58,19 +58,20 @@ int main(int argc, char* argv[]){
 	Array<DictPara> dictionary;
 
 	// Read from file
-    while(inFile.peek() != EOF){
+	int total2read = 10000;
+    while(inFile.peek() != EOF && total2read > 0){
         inFile >> X;
 		dictionary.push_back(X);
+//		--total2read;
     }
 
 	inFile.close();
 
-/* TODO:
-	std::cout << "Words: " << dictionary.size() << std::endl;
+    std::cout << "Words: " << dictionary.size() << std::endl;
 	std::cout << "Capacity: " << dictionary.capacity() << std::endl;
+	std::cout << "Unused: " << (dictionary.capacity() - dictionary.size()) * sizeof(DictPara) << std::endl;
 
 	// First 10 records
-
 	for(size_t i=0; i < 10; ++i){
 		std::cout << dictionary[i];
 	}
@@ -81,11 +82,11 @@ int main(int argc, char* argv[]){
 		std::cin.getline(word, 128);
 		DictPara what(word, "");
 		auto pos = dictionary.find( what );
-		if (pos != dictionary.end()){
-			std::cout << *pos << std::endl;
+		if (pos != -1){
+			std::cout << dictionary[pos] << std::endl;
 		}
 	} while (stroka(word) != "");
-*/
+
 
 	return 0;
 }
