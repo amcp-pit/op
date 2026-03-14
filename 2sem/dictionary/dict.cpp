@@ -56,6 +56,8 @@ int main(int argc, char* argv[]){
 
     DictPara X;
 	Array<DictPara> dictionary;
+//	Array<DictPara>::iterator pos(&X); // iterator(const DictPara*)
+	Array<DictPara>::iterator pos = dictionary.begin(); // iterator(const iterator&)
 
 	// Read from file
 	int total2read = 10000;
@@ -72,9 +74,24 @@ int main(int argc, char* argv[]){
 	std::cout << "Unused: " << (dictionary.capacity() - dictionary.size()) * sizeof(DictPara) << std::endl;
 
 	// First 10 records
+/*
 	for(size_t i=0; i < 10; ++i){
 		std::cout << dictionary[i];
 	}
+*/
+	int cnt = 10;
+	std::cout << "--- First " << cnt << " words\n";
+	for(auto pos=dictionary.begin(); pos!=dictionary.end() && cnt > 0; ++pos, --cnt){
+		std::cout << *pos;
+	}
+
+	cnt = 10;
+    std::cout << "--- Last " << cnt << " words\n";
+    for(auto pos=dictionary.rbegin(); pos!=dictionary.rend() && cnt > 0; ++pos, --cnt){
+        std::cout << *pos;
+    }
+
+	dictionary.sort();
 
 	char word[128];
 	do{
@@ -82,8 +99,12 @@ int main(int argc, char* argv[]){
 		std::cin.getline(word, 128);
 		DictPara what(word, "");
 		auto pos = dictionary.find( what );
-		if (pos != -1){
-			std::cout << dictionary[pos] << std::endl;
+		for(int i=0; i<10000; ++i){
+			pos = dictionary.find( what );
+		}
+
+		if (pos != dictionary.end()){
+			std::cout << *pos << std::endl;
 		}
 	} while (stroka(word) != "");
 
