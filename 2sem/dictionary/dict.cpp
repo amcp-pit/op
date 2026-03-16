@@ -3,6 +3,7 @@
 #include "stroka.hpp"
 #include "dictpara.hpp"
 #include "array.hpp"
+#include "list.hpp"
 
 std::ostream& operator<< (std::ostream& out, const DictPara& X) {
 	out << X.get_word()<<": " << X.get_translate() << "\n";
@@ -55,9 +56,9 @@ int main(int argc, char* argv[]){
 */
 
     DictPara X;
-	Array<DictPara> dictionary;
+	List<DictPara> dictionary;
 //	Array<DictPara>::iterator pos(&X); // iterator(const DictPara*)
-	Array<DictPara>::iterator pos = dictionary.begin(); // iterator(const iterator&)
+//	Array<DictPara>::iterator pos = dictionary.begin(); // iterator(const iterator&)
 
 	// Read from file
 	int total2read = 10000;
