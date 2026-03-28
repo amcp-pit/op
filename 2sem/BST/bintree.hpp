@@ -93,6 +93,10 @@ public:
 	iterator end() const {
 		return iterator(nullptr);
 	}
+
+	iterator find(const T& x) const;
+	void erase(const iterator& pos);
+
 };
 
 
@@ -125,6 +129,56 @@ void BinTree<T>::insert(const T& x) {
 	} else {
 		parent->right= current;
 	}
+}
+
+template <typename T>
+typename BinTree<T>::iterator BinTree<T>::find(const T& x) const {
+	Node *current = root;
+	while (current) {
+		if (x == current->data) break;
+		if (x < current->data)
+			current = current->left;
+		else
+			current = current->right;
+	}
+	return iterator(current);
+}
+
+template <typename T>
+void BinTree<T>::erase(const typename BinTree<T>::iterator& pos) {
+	Node *toDelete = pos.current;
+	if (toDelete == nullptr) return;
+	Node *alt;
+	if (toDelete->right == nullptr)
+		alt = toDelete->left;
+	else if(toDelete->left == nullptr)
+		alt = toDelete->right;
+	else {
+		alt = toDelete->right->minimum(); // alt = toDelete->next();
+		if (alt->parent != toDelete){
+			alt->parent->left = alt->right;
+			if (alt->right) alt->right->parent = alt->parent;
+			alt->right = toDelete->right;
+			toDelete->right->parent = alt;
+		}
+		alt->left = toDelete->left;
+		toDelete->left->parent = alt;
+	}
+
+	if (toDelete->parent == nullptr)
+		root = alt;
+	else {
+		if (toDelete->parent->left == toDelete)
+			toDelete->parent->left = alt;
+		else
+			toDelete->parent->right = alt;
+	}
+	if (alt) alt->parent = toDelete->parent;
+
+	toDelete->right = nullptr;
+	toDelete->left = nullptr;
+	delete toDelete;
+	--count;
 }
 
 #endif
