@@ -56,6 +56,9 @@ class AVLTree{
 public:
 	AVLTree() : root(nullptr), count(0) {}
 	~AVLTree() { empty(); }
+	AVLTree(const AVLTree&) = delete;
+	AVLTree& operator=(const AVLTree&) = delete;
+
 	void empty() { delete root; root = nullptr; count = 0; }
 	void insert(const T& x);
 	size_t size() const { return count; }
