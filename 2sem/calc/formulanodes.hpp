@@ -2,6 +2,8 @@
 #define _FORMULA_NODES_26
 #include <string>
 #include <cmath>
+#include <iostream>
+#include "../BST/AVLtree.hpp"
 
 class FormulaNode {
 public:
@@ -26,6 +28,18 @@ public:
 	}
 };
 
+class ParamValue {
+	const char ch;
+	const double val;
+public:
+	ParamValue(char c, double value) : ch(c), val(value) {}
+	double getValue()const { return val; }
+	bool operator<(const ParamValue& other) const { return ch < other.ch; }
+    bool operator==(const ParamValue& other) const { return ch == other.ch; }
+};
+
+extern AVLTree<ParamValue> Workspace;
+
 class ParamNode : public FormulaNode {
 	const char param;
 public:
@@ -33,10 +47,15 @@ public:
 	std::string str() const override { return std::string(1, param); }
 	std::string tex() const override { return str(); }
 	double calc() const override {
+		auto pos = Workspace.find(ParamValue(param ,0));
+		if (pos != Workspace.end()){
+			return (*pos).getValue();
+		}
 		double tmp;
 		std::cout << param << " = ";
 		std::cin >> tmp;
 		std::cin.ignore();
+		Workspace.insert(ParamValue(param, tmp));
 		return tmp;
 	}
 };
@@ -104,6 +123,38 @@ public:
     std::string tex() const {
         return "(" + left->tex() + ")^{" + right->tex() + "}";
     }
+};
+
+class AssignmentNode : public FormulaNode {
+	ParamNode *left;
+	FormulaNode* right;
+public:
+	AssignmentNode(FormulaNode *L, FormulaNode* R) : left(nullptr), right(R) {
+		left = dynamic_cast<ParamNode*>(L);
+		if (left == nullptr) {
+			throw "Error RValue";
+		}
+	}
+	~AssignmentNode() {
+		delete left;
+		delete right;
+	}
+	std::string str() const {
+		return left->str() + std::string(" := ") + right->str();
+	}
+    std::string tex() const {
+        return left->tex() + std::string(" = ") + right->tex();
+    }
+	double calc() const {
+		double result = right->calc();
+		char paramName = left->str()[0];
+		auto pos = Workspace.find(ParamValue(paramName, 0));
+		if (pos != Workspace.end()) {
+			Workspace.erase(pos);
+		}
+		Workspace.insert(ParamValue(paramName, result));
+		return result;
+	}
 };
 
 #endif

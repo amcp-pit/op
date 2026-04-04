@@ -1,22 +1,27 @@
 #include <iostream>
-#include "formulanodes.hpp"
+#include <cstring>
+#include "formulae.hpp"
 
 int main() {
-	FormulaNode *x = new ParamNode('x');
-	FormulaNode *y = new ParamNode('y');
-	FormulaNode *z = new PlusNode(x, y);
-	z = new MultNode(new NumNode(-1), z);
-	z = new DivideNode(z, new MinusNode(new NumNode(2), new ParamNode('x')));
-	std::cout << z->str() << std::endl;
+	char str[1024];
 	try {
-		double result = z->calc();
-	    std::cout << z->str() << " = " << result << std::endl;
-    	std::cout << "TeX: " << z->tex() <<std::endl;
-	} catch (const char * error) {
-		std::cout <<"\nERROR: " << error << std::endl;
-	} catch(...) {
-		std::cout << "Unknown error" << std::endl;
+		while(true){
+			std::cout << "> ";
+			std::cin.getline(str, 1024);
+			if (strlen(str) == 0) continue;
+			if (strcmp(str, "quit") == 0) break;
+			try {
+				Formula F(str);
+				std::cout << "calculate: " << F.str() << std::endl;
+				double result = F.calc();
+				std::cout << "result = " << result << std::endl;
+				std::cout << "TeX: " << F.tex() << std::endl;
+			} catch (...) {
+				std::cout << "Error " << std::endl;
+			}
+		}
+	} catch(...){
+		std::cout << "Unknown error " << std::endl;
 	}
-
 	return 0;
 }
