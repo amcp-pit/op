@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include "../BST/AVLtree.hpp"
+#include "errors.hpp"
 
 class FormulaNode {
 public:
@@ -19,8 +20,9 @@ public:
 	NumNode(double x) : num(x) {}
 	double calc() const { return num; }
 	std::string str() const {
-		if (num<0)
+		if (num<0) {
 			return std::string("(") + std::to_string(num) + std::string(")");
+		}
 		return std::to_string(num);
 	}
 	std::string tex() const {
@@ -102,7 +104,7 @@ public:
     DivideNode(FormulaNode* L, FormulaNode* R) : BinNode(L, R) {}
     double calc() const {
 		double denum = right->calc();
-		if (denum == 0.0) throw "Divide by zero";
+		if (denum == 0.0) throw ErrorDivideByZero();
 		return left->calc() / denum;
 	}
     std::string str() const {
@@ -132,7 +134,7 @@ public:
 	AssignmentNode(FormulaNode *L, FormulaNode* R) : left(nullptr), right(R) {
 		left = dynamic_cast<ParamNode*>(L);
 		if (left == nullptr) {
-			throw "Error RValue";
+			throw ErrorRValue();
 		}
 	}
 	~AssignmentNode() {

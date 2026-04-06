@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include "formulae.hpp"
+#include "errors.hpp"
 
 int main() {
 	char str[1024];
@@ -16,12 +17,16 @@ int main() {
 				double result = F.calc();
 				std::cout << "result = " << result << std::endl;
 				std::cout << "TeX: " << F.tex() << std::endl;
+			} catch (const Error & error) {
+				std::cout << "ERROR: " << error.what() << std::endl;
+			} catch (const char * error) {
+				std::cout << "Error: " << error << std::endl;
 			} catch (...) {
-				std::cout << "Error " << std::endl;
+				std::cout << "Unknown error." << std::endl;
 			}
 		}
 	} catch(...){
-		std::cout << "Unknown error " << std::endl;
+		std::cout << "Unknown error." << std::endl;
 	}
 	return 0;
 }

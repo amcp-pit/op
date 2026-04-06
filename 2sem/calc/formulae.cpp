@@ -1,4 +1,5 @@
 #include "formulae.hpp"
+#include "errors.hpp"
 #include <stack>
 
 FormulaNode* Formula::Postfix2Tree(const char * str) {
@@ -41,10 +42,13 @@ FormulaNode* Formula::Postfix2Tree(const char * str) {
                 result = new AssignmentNode(left, right);
                 break;
 		default:
-				if (ch>='0' && ch<='9')
+				if (ch>='0' && ch<='9') {
 					result = new NumNode(ch-'0');
-				if ( (ch>='a' && ch<='z') || (ch>='A' && ch<='Z'))
+				} else if ( (ch>='a' && ch<='z') || (ch>='A' && ch<='Z')) {
 					result = new ParamNode(ch);
+				} else {
+					throw 3;
+				}
 		}
 		S.push(result);
 		++index;
@@ -62,6 +66,53 @@ FormulaNode* Formula::Postfix2Tree(const char * str) {
 			S.pop();
 			delete left;
 		}
-		throw "Error Postfix";
+		throw ErrorPostfix(str, index);
 	}
 }
+
+//-----------------------------------------
+const unsigned char ActionsTable[][10] = {
+//   0 + - * / ^ ( ) P =
+	{5,2,2,2,2,2,2,6,1,2}, // empty
+	{3,3,3,2,2,2,2,3,1,8}, // +
+	{3,3,3,2,2,2,2,3,1,8}, // -
+	{3,3,3,3,3,2,2,3,1,8}, // *
+    {3,3,3,3,3,2,2,3,1,8}, // /
+    {3,3,3,3,3,2,2,3,1,8}, // ^
+    {7,2,2,2,2,2,2,4,1,2}, // (
+    {3,2,2,2,2,2,2,3,1,2}  // =
+};
+
+int actionsRowNumber(char ch) {
+	switch(ch) {
+	case 0 : return 0;
+	case '+' : return 1;
+    case '-' : return 2;
+    case '*' : return 3;
+    case '/' : return 4;
+    case '^' : return 5;
+    case '(' : return 6;
+    case '=' : return 7;
+	}
+	return 8;
+}
+
+int actionsColNumber(char ch) {
+    switch(ch) {
+    case 0 : return 0;
+    case '+' : return 1;
+    case '-' : return 2;
+    case '*' : return 3;
+    case '/' : return 4;
+    case '^' : return 5;
+    case '(' : return 6;
+    case ')' : return 7;
+    case '=' : return 9;
+    }
+	if (ch>='a' && ch<='z') return 8;
+    if (ch>='A' && ch<='Z') return 8;
+    if (ch>='0' && ch<='9') return 8;
+    return 10;
+}
+
+
