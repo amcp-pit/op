@@ -159,4 +159,108 @@ public:
 	}
 };
 
+class UnarNode : public FormulaNode {
+protected:
+	FormulaNode * next;
+public:
+	UnarNode(FormulaNode * node) : next(node){}
+	~UnarNode() {delete next;}
+};
+
+class UMinusNode : public UnarNode {
+public:
+	UMinusNode(FormulaNode * node) : UnarNode(node) {}
+	double calc() const {return -(next->calc());}
+	std::string str() const {
+		return std::string("-(") + next->str() + std::string(")");
+	}
+    std::string tex() const {
+        return std::string("-(") + next->tex() + std::string(")");
+    }
+};
+
+typedef double (*pFunction)(double);
+
+class FunctionsTable {
+	struct Func {
+		pFunction fun;
+		const char * name;
+		unsigned char shortName;
+	};
+
+	static const Func FTable[] = {
+		{std::asin, "asin", 128},
+		{std::acos, "acos", 129},
+	    {std::sin, "sin", 130},
+	    {std::cos, "cos", 131},
+	    {std::atan, "arctg", 132},
+	    {std::tan, "tg", 133},
+	    {std::log, "ln", 134},
+	    {std::exp, "exp", 135},
+	    {std::sqrt, "sqrt", 136},
+	    {std::sinh, "sh", 137},
+	    {std::cosh, "ch", 138},
+	    {std::fabs, "abs", 139}
+	};
+	static int sizeFTable = sizeof(FTable)/sizeof(FTable[0]);
+public:
+	static int getID(char s) {
+		unsigned char shortName = static_cast<unsigned char>(s);
+		for(int i=0; i < sizeFTable; ++i) {
+			if (FTable[i].shortName == shortName) return i;
+		}
+		throw ErrorUnknownFunction(s);
+	}
+    static int getID(const char * s) {
+        for(int i=0; i < sizeFTable; ++i) {
+            if (strcmp(FTable[i].name, s) == 0) return i;
+        }
+        throw ErrorUnknownFunction(s);
+    }
+	static const char* getName(int id) {
+		if (id<0 || id>=sizeFTable)
+			throw ErrorOutOfBounds(0, sizeFTable, id);
+		return FTable[id].name;
+	}
+    static char getShortName(int id) {
+        if (id<0 || id>=sizeFTable)
+            throw ErrorOutOfBounds(0, sizeFTable, id);
+        return FTable[id].shortName;
+    }
+	static pfunction get(int id) {
+        if (id<0 || id>=sizeFTable)
+            throw ErrorOutOfBounds(0, sizeFTable, id);
+        return FTable[id].fun;
+	}
+	static pfunction get(char s) {
+		return get(getID(s));
+	}
+    static pfunction get(const char * s) {
+        return get(getID(s));
+    }
+};
+
+extern FunctionsTable FunTable;
+
+class FuncNode : public UnarNode {
+	int fnum;
+public:
+	FunctNode(char s, FormulaNode * node) : UnarNode(node) {
+		fnum = FunTable.getID(s);
+	}
+    FunctNode(const char *s, FormulaNode * node) : UnarNode(node) {
+        fnum = FunTable.getID(s);
+    }
+	double calc() const {
+		return (FunTable.get(fnum))(next->calc());
+	}
+	std::string str() const {
+		return std::string(FunTable.getName(fnum)) + "(" + next->str() + ")";
+	}
+    std::string tex() const {
+        return "\\" + std::string(FunTable.getName(fnum)) + "\\left(" + next->tex() + "\\right)";
+    }
+};
+
 #endif
+

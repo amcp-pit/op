@@ -47,7 +47,8 @@ FormulaNode* Formula::Postfix2Tree(const char * str) {
 				} else if ( (ch>='a' && ch<='z') || (ch>='A' && ch<='Z')) {
 					result = new ParamNode(ch);
 				} else {
-					throw 3;
+					if (S.empty()) throw 1; right = S.top(); S.pop();
+					result = new FuncNode(ch, right);
 				}
 		}
 		S.push(result);
@@ -72,15 +73,16 @@ FormulaNode* Formula::Postfix2Tree(const char * str) {
 
 //-----------------------------------------
 const unsigned char ActionsTable[][10] = {
-//   0 + - * / ^ ( ) P =
-	{5,2,2,2,2,2,2,6,1,2}, // empty
-	{3,3,3,2,2,2,2,3,1,8}, // +
-	{3,3,3,2,2,2,2,3,1,8}, // -
-	{3,3,3,3,3,2,2,3,1,8}, // *
-    {3,3,3,3,3,2,2,3,1,8}, // /
-    {3,3,3,3,3,2,2,3,1,8}, // ^
-    {7,2,2,2,2,2,2,4,1,2}, // (
-    {3,2,2,2,2,2,2,3,1,2}  // =
+//   0 + - * / ^ ( ) P = F
+	{5,2,2,2,2,2,2,6,1,2,2}, // empty
+	{3,3,3,2,2,2,2,3,1,8,2}, // +
+	{3,3,3,2,2,2,2,3,1,8,2}, // -
+	{3,3,3,3,3,2,2,3,1,8,2}, // *
+    {3,3,3,3,3,2,2,3,1,8,2}, // /
+    {3,3,3,3,3,2,2,3,1,8,2}, // ^
+    {7,2,2,2,2,2,2,4,1,2,2}, // (
+    {3,2,2,2,2,2,2,3,1,2,2}, // =
+	{3,3,3,3,3,3,2,3,1,8,9}  // F
 };
 
 int actionsRowNumber(char ch) {
@@ -114,5 +116,29 @@ int actionsColNumber(char ch) {
     if (ch>='0' && ch<='9') return 8;
     return 10;
 }
+
+void Formula::Infix2Postfix(const char * inStr, char * outStr) {
+	unsigned char action = 0;
+	int i = 0;
+	int j = 0;
+	std::stack<char> S;
+	do {
+		int col = actionsColNumber(inStr[i]);
+		int row = actionsRowNumber(S.empty() ? 0 : S.top());
+		action = ActionsTable[row][col];
+		switch(action){
+		case 1: outStr[j] = inStr[i]; ++i; ++j; break;
+		case 2: S.push(inStr[i]); ++i; break;
+		case 3: outStr[j] = S.top(); ++j; S.pop(); break;
+		case 4: S.pop(); ++i; break;
+		case 5: outStr[j] = '\0'; break;
+		case 6: throw ErrorBracketsClose(inStr, i); break;
+		case 7: throw ErrorBracketsOpen(inStr, i); break;
+		case 8: throw ErrorRValue(); break;
+		case 9: throw ErrorFunctionsBrackets(inStr, i); break;
+		}
+	} while (action!=5);
+}
+
 
 

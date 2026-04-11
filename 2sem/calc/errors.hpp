@@ -37,4 +37,32 @@ public:
 	}
 };
 
+class ErrorBracketsClose : public Error {
+    std::string str;
+    int index;
+public:
+    ErrorBracketsClose(const char *s, int position) : str(s), index(position) {}
+    std::string what() const {
+        return std::string("Error in string: '")
+               + str
+               + std::string("' at position ")
+               + std::to_string(index + 1)
+			   + std::string(", extra close bracket");
+    }
+};
+
+class ErrorBracketsOpen : public Error {
+    std::string str;
+    int index;
+public:
+    ErrorBracketsOpen(const char *s, int position) : str(s), index(position) {}
+    std::string what() const {
+        return std::string("Error in string: '")
+               + str
+               + std::string("' at position ")
+               + std::to_string(index + 1)
+               + std::string(", extra open bracket");
+    }
+};
+
 #endif
