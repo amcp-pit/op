@@ -65,4 +65,50 @@ public:
     }
 };
 
+class ErrorUnknownFunction : public Error {
+	std::string str;
+public:
+	ErrorUnknownFunction(const char * s) : str(s) {}
+	ErrorUnknownFunction(char s): str(1, s) {}
+	std::string what()const {
+		return std::string("Unknown function name '")
+			   + str + std::string("'");}
+};
+
+class ErrorFunctionBrackets : public Error {
+	std::string str;
+	int index;
+public:
+	ErrorFunctionBrackets(const char *s, int position) : str(s), index(position) {}
+	std::string what() const {
+		return std::string("Error with brackets after function in '")
+			   + str
+			   + std::string("' at position ")
+			   + std::to_string(index+1);
+	}
+};
+
+class ErrorFunctionArguments : public Error {
+public:
+	std::string what() const {
+		return std::string("Function without arguments");
+	}
+};
+
+class ErrorOutOfBounds : public Error {
+	int minimum;
+	int value;
+	int maximum;
+public:
+	ErrorOutOfBounds(int left=0, int right=0, int val=0) : 
+			minimum(left), maximum(right), value(val) {}
+    std::string what() const {
+        return std::string("Out of bounds: ")
+			   +std::to_string(value)
+			   +std::string(" not in [")
+               +std::to_string(minimum) + std::string(", ")
+               +std::to_string(maximum) + std::string("]");
+    }
+};
+
 #endif

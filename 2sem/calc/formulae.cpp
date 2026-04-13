@@ -72,7 +72,7 @@ FormulaNode* Formula::Postfix2Tree(const char * str) {
 }
 
 //-----------------------------------------
-const unsigned char ActionsTable[][10] = {
+const unsigned char ActionsTable[][11] = {
 //   0 + - * / ^ ( ) P = F
 	{5,2,2,2,2,2,2,6,1,2,2}, // empty
 	{3,3,3,2,2,2,2,3,1,8,2}, // +
@@ -135,10 +135,49 @@ void Formula::Infix2Postfix(const char * inStr, char * outStr) {
 		case 6: throw ErrorBracketsClose(inStr, i); break;
 		case 7: throw ErrorBracketsOpen(inStr, i); break;
 		case 8: throw ErrorRValue(); break;
-		case 9: throw ErrorFunctionsBrackets(inStr, i); break;
+		case 9: throw ErrorFunctionBrackets(inStr, i); break;
 		}
 	} while (action!=5);
 }
 
+void Formula::InfixFilter(const char* instr, char* outstr){
+    int i = 0; // индекс во входной строке
+    int j = 0; // индекс в выходной строке
+    char ch;
+    char buf[256];
+    int bufLen = 0;
+    char prev = 0;
+
+    while((ch = instr[i++]) != '\0') {
+        if (ch==' ' || ch=='\t') continue;
+//        if ((ch>='a' && ch<='z') || (ch>='A' && ch<='Z') || (ch>='0' && ch<='9')){
+        if (std::isalpha(ch) || std::isdigit(ch)){
+            buf[bufLen++] = ch;
+        } else {
+            if (ch=='-' && ( prev==0 || prev=='(' || prev=='=') ) {
+                outstr[j++] = '0';
+            } else {
+                if (bufLen==1){
+                    outstr[j++] = buf[0];
+                    bufLen = 0;
+                } else if (bufLen > 1){
+                    buf[bufLen] = '\0';
+                    outstr[j++] = FunTable.getShortName(buf);
+                    bufLen = 0;
+                }
+            }
+            outstr[j++] = ch;
+        }
+        prev = ch;
+    }
+//  if (bufLen > 1) throw ErrorFunctionArguments();
+    if (bufLen > 1){
+                    buf[bufLen] = '\0';
+                    outstr[j++] = FunTable.getShortName(buf);
+                    bufLen = 0;
+    }
+    if (bufLen > 0) outstr[j++] = buf[0];
+    outstr[j] = '\0';
+}
 
 

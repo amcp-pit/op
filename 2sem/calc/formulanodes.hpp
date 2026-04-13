@@ -1,7 +1,8 @@
 #ifndef _FORMULA_NODES_26
 #define _FORMULA_NODES_26
-#include <string>
+#include <cstring>
 #include <cmath>
+#include <string>
 #include <iostream>
 #include "../BST/AVLtree.hpp"
 #include "errors.hpp"
@@ -188,7 +189,7 @@ class FunctionsTable {
 		unsigned char shortName;
 	};
 
-	static const Func FTable[] = {
+	static constexpr const Func FTable[] = {
 		{std::asin, "asin", 128},
 		{std::acos, "acos", 129},
 	    {std::sin, "sin", 130},
@@ -202,7 +203,11 @@ class FunctionsTable {
 	    {std::cosh, "ch", 138},
 	    {std::fabs, "abs", 139}
 	};
-	static int sizeFTable = sizeof(FTable)/sizeof(FTable[0]);
+	static const int sizeFTable = sizeof(FTable)/sizeof(FTable[0]);
+/*
+	static const Func FTable[];
+	static const int sizeFTable;
+*/
 public:
 	static int getID(char s) {
 		unsigned char shortName = static_cast<unsigned char>(s);
@@ -227,15 +232,18 @@ public:
             throw ErrorOutOfBounds(0, sizeFTable, id);
         return FTable[id].shortName;
     }
-	static pfunction get(int id) {
+    static char getShortName(const char *str) {
+        return getShortName(getID(str));
+    }
+	static pFunction get(int id) {
         if (id<0 || id>=sizeFTable)
             throw ErrorOutOfBounds(0, sizeFTable, id);
         return FTable[id].fun;
 	}
-	static pfunction get(char s) {
+	static pFunction get(char s) {
 		return get(getID(s));
 	}
-    static pfunction get(const char * s) {
+    static pFunction get(const char * s) {
         return get(getID(s));
     }
 };
@@ -245,10 +253,10 @@ extern FunctionsTable FunTable;
 class FuncNode : public UnarNode {
 	int fnum;
 public:
-	FunctNode(char s, FormulaNode * node) : UnarNode(node) {
+	FuncNode(char s, FormulaNode * node) : UnarNode(node) {
 		fnum = FunTable.getID(s);
 	}
-    FunctNode(const char *s, FormulaNode * node) : UnarNode(node) {
+    FuncNode(const char *s, FormulaNode * node) : UnarNode(node) {
         fnum = FunTable.getID(s);
     }
 	double calc() const {
