@@ -1,5 +1,5 @@
 #include <iostream>
-#include <memory> // для std::unique_ptr и std::make_unique
+#include <memory> // РґР»СЏ std::unique_ptr Рё std::make_unique
 
 class Fraction {
 private:
@@ -16,12 +16,12 @@ public:
 };
 
 int main() {
-	// Создаем объект с динамически выделенным Fraction с numerator = 7 и denominator = 9
+	// РЎРѕР·РґР°РµРј РѕР±СЉРµРєС‚ СЃ РґРёРЅР°РјРёС‡РµСЃРєРё РІС‹РґРµР»РµРЅРЅС‹Рј Fraction СЃ numerator = 7 Рё denominator = 9
 	std::unique_ptr<Fraction> fraction = std::make_unique<Fraction>(7, 9);
 	std::cout << *fraction << '\n';
 
-	// Создаем объект с динамически выделенным массивом Fraction длиной 5.
-	// Используем автоматическое определение типа данных с помощью ключевого слова auto
+	// РЎРѕР·РґР°РµРј РѕР±СЉРµРєС‚ СЃ РґРёРЅР°РјРёС‡РµСЃРєРё РІС‹РґРµР»РµРЅРЅС‹Рј РјР°СЃСЃРёРІРѕРј Fraction РґР»РёРЅРѕР№ 5.
+	// РСЃРїРѕР»СЊР·СѓРµРј Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РѕРїСЂРµРґРµР»РµРЅРёРµ С‚РёРїР° РґР°РЅРЅС‹С… СЃ РїРѕРјРѕС‰СЊСЋ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° auto
 	auto fractions = std::make_unique<Fraction[]>(5);
 	std::cout << fractions[0] << '\n';
 

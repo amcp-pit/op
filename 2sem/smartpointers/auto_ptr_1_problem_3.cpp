@@ -5,25 +5,25 @@ class Auto_ptr1 {
 	T* m_ptr;
 public:
 	// Получаем указатель для "владения" через конструктор
-	Auto_ptr1(T* ptr=nullptr) : m_ptr(ptr) { } 	
-	
+	Auto_ptr1(T* ptr=nullptr) : m_ptr(ptr) { }
+
 	// Деструктор позаботится об удалении указателя
-	~Auto_ptr1() {	
+	~Auto_ptr1() {
 		delete m_ptr;
 	}
- 
-	// Перегрузка оператора разыменования и оператора ->, 
+
+	// Перегрузка оператора разыменования и оператора ->,
 	// чтобы иметь возможность использовать Auto_ptr1 как m_ptr
 	T& operator*() const { return *m_ptr; }
 	T* operator->() const { return m_ptr; }
 };
- 
+
 class Item {
 public:
     Item() { std::cout << "Item acquired\n"; }
     ~Item() { std::cout << "Item destroyed\n"; }
 };
- 
+
 void passByValue(Auto_ptr1<Item> item) {
 	return;
 }
@@ -33,13 +33,13 @@ int main() {
 	{
 		Auto_ptr1<Item> item1(new Item);
 		passByValue(item1);
-	} 
+	}
 
 	return 0;
-} 
+}
 
 /*
-Результат выполнения программы: 
+Результат выполнения программы:
 	Item acquired
 	Item destroyed
 	Item destroyed

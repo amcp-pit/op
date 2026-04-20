@@ -4,45 +4,45 @@
 
 class Human {
 	std::string m_name;
-	std::shared_ptr<Human> m_partner; // изначально пустой
+	std::shared_ptr<Human> m_partner; // РёР·РЅР°С‡Р°Р»СЊРЅРѕ РїСѓСЃС‚РѕР№
 public:
-	Human(const std::string &name): m_name(name) { 
+	Human(const std::string &name): m_name(name) {
 		std::cout << m_name << " created\n";
 	}
 	~Human() {
 		std::cout << m_name << " destroyed\n";
 	}
- 
+
 	friend bool partnerUp(std::shared_ptr<Human> &h1,
-                        std::shared_ptr<Human> &h2)
+                          std::shared_ptr<Human> &h2)
 	{
 	    if (!h1 || !h2)
 		return false;
- 
+
 	    h1->m_partner = h2;
 	    h2->m_partner = h1;
-       std::cout << h1->m_name << " is now partnered with " 
-                 << h2->m_name << "\n";
+        std::cout << h1->m_name << " is now partnered with "
+                  << h2->m_name << "\n";
 		return true;
 	}
 };
- 
+
 int main()
 {
-  // создание умного указателя с объектом Anton класса Human 
-	auto anton = std::make_shared<Human>("Anton"); 
-  
-  // создание умного указателя с объектом Ivan класса Human 
-	auto ivan = std::make_shared<Human>("Ivan"); 
- 
-	partnerUp(anton, ivan); 
-  // Anton указывает на Ivan-а, а Ivan указывает на Anton-а
- 
+  // СЃРѕР·РґР°РЅРёРµ СѓРјРЅРѕРіРѕ СѓРєР°Р·Р°С‚РµР»СЏ СЃ РѕР±СЉРµРєС‚РѕРј Anton РєР»Р°СЃСЃР° Human
+	auto anton = std::make_shared<Human>("Anton");
+
+  // СЃРѕР·РґР°РЅРёРµ СѓРјРЅРѕРіРѕ СѓРєР°Р·Р°С‚РµР»СЏ СЃ РѕР±СЉРµРєС‚РѕРј Ivan РєР»Р°СЃСЃР° Human
+	auto ivan = std::make_shared<Human>("Ivan");
+
+	partnerUp(anton, ivan);
+  // Anton СѓРєР°Р·С‹РІР°РµС‚ РЅР° Ivan-Р°, Р° Ivan СѓРєР°Р·С‹РІР°РµС‚ РЅР° Anton-Р°
+
 	return 0;
 }
 
 /*
-В итоге не будет никаких удалений.
-Ни объект Anton, ни объект Ivan не уничтожаются! 
-По сути, Anton не дает уничтожить Ivan-а, а Ivan не дает уничтожить Anton-а.
+Р’ РёС‚РѕРіРµ РЅРµ Р±СѓРґРµС‚ РЅРёРєР°РєРёС… СѓРґР°Р»РµРЅРёР№.
+РќРё РѕР±СЉРµРєС‚ Anton, РЅРё РѕР±СЉРµРєС‚ Ivan РЅРµ СѓРЅРёС‡С‚РѕР¶Р°СЋС‚СЃСЏ! 
+РџРѕ СЃСѓС‚Рё, Anton РЅРµ РґР°РµС‚ СѓРЅРёС‡С‚РѕР¶РёС‚СЊ Ivan-Р°, Р° Ivan РЅРµ РґР°РµС‚ СѓРЅРёС‡С‚РѕР¶РёС‚СЊ Anton-Р°.
 */

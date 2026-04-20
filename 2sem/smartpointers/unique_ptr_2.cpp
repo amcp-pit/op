@@ -1,6 +1,6 @@
 #include <iostream>
 #include <memory> // для std::unique_ptr
- 
+
 class Item {
 public:
 	Item() { std::cout << "Item acquired\n"; }
@@ -21,7 +21,7 @@ int main()
 {
     auto ptr = std::make_unique<Item>();
 
-//    takeOwnership(ptr); // это не скомпилируется. 
+//    takeOwnership(ptr); // это не скомпилируется.
                           // Надо использовать семантику перемещения
     takeOwnership(std::move(ptr)); // используем семантику перемещения
 

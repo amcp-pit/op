@@ -5,19 +5,19 @@ class Auto_ptr1 {
 	T* m_ptr;
 public:
 	// Получаем указатель для "владения" через конструктор
-	Auto_ptr1(T* ptr=nullptr) : m_ptr(ptr) { } 	
-	
+	Auto_ptr1(T* ptr=nullptr) : m_ptr(ptr) { }
+
 	// Деструктор позаботится об удалении указателя
-	~Auto_ptr1() {	
+	~Auto_ptr1() {
 		delete m_ptr;
 	}
- 
-	// Перегрузка оператора разыменования и оператора ->, 
+
+	// Перегрузка оператора разыменования и оператора ->,
 	// чтобы иметь возможность использовать Auto_ptr1 как m_ptr
 	T& operator*() const { return *m_ptr; }
 	T* operator->() const { return m_ptr; }
 };
- 
+
 class Item {
 public:
     Item() { std::cout << "Item acquired\n"; }
@@ -36,20 +36,20 @@ void myFunction() {
 	// Использование ptr
 	ptr->sayHello();
 }
- 
+
 int main() {
 	myFunction();
 	return 0;
-} 
+}
 
 /*
-Если пользователь введет ненулевое целое число, то результат выполнения программы: 
+Если пользователь введет ненулевое целое число, то результат выполнения программы:
 Item acquired
 Enter an integer: 1
 Hello!
 Item destroyed
 
-Если же пользователь введет ноль, то функция myFunction() завершит свое выполнение досрочно, 
+Если же пользователь введет ноль, то функция myFunction() завершит свое выполнение досрочно,
 и увидим:
 Item acquired
 Enter an integer: 0
